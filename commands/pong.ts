@@ -3,11 +3,12 @@ import { CommandData } from "../index";
 
 const command: CommandData = {
   meta: {
-    name: "another",
-    description: "This is a another description",
+    name: "ping",
+    description: "im just a ping command",
   },
   handler: (interaction: Interaction) => {
-    interaction.isRepliable() ? interaction.reply("another test") : console.log("no");
+    if (!interaction.isRepliable()) return;
+    interaction.reply('pong')
   },
 };
 
