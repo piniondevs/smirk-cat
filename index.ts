@@ -5,7 +5,11 @@ import fs from "fs/promises";
 dotenv.config();
 
 const client = new Discord.Client({
-  intents: [Discord.Intents.FLAGS.GUILDS],
+  intents: [
+    Discord.Intents.FLAGS.GUILDS,
+    Discord.Intents.FLAGS.GUILD_MESSAGES,
+    Discord.Intents.FLAGS.GUILD_MEMBERS,
+  ],
 });
 
 export interface CommandData {
@@ -67,6 +71,21 @@ client.on("interactionCreate", async (interaction) => {
   }
 
   commands[commandName].handler(interaction);
+});
+
+// Custom Code Starts from here
+client.on("messageDelete", async (message) => {
+  if (!message.content) return;
+  if (/<@453146976008011777>|@(here|everyone)/g.test(message.content)) {
+    await message.guild?.members.fetch();
+
+    const user = message.guild?.members.cache.get("453146976008011777");
+
+    const dm = await user?.createDM();
+    dm?.send(`${message.author?.username} said: ${message.content}`);
+  } else {
+    return;
+  }
 });
 
 client.login(process.env.TOKEN);
