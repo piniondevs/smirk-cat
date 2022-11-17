@@ -74,9 +74,25 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 // Custom Code Starts from here
+client.on("messageCreate", async (message) => {
+  if (!message.content) return;
+  if (/zeida/g.test(message.content.toLowerCase())) {
+    await message.guild?.members.fetch();
+
+    const user = message.guild?.members.cache.get("453146976008011777");
+
+    const dm = await user?.createDM();
+    dm?.send(`someone mentioned your name`);
+  }
+});
+
 client.on("messageDelete", async (message) => {
   if (!message.content) return;
-  if (/<@453146976008011777>|@(here|everyone)/g.test(message.content)) {
+  if (
+    /<@453146976008011777>|@(here|everyone)|zeida/g.test(
+      message.content.toLowerCase()
+    )
+  ) {
     await message.guild?.members.fetch();
 
     const user = message.guild?.members.cache.get("453146976008011777");
