@@ -1,6 +1,7 @@
-import Discord from "discord.js";
+import Discord, { TextChannel } from "discord.js";
 import dotenv from "dotenv";
 import fs from "fs/promises";
+import { DateTime } from "luxon";
 
 dotenv.config();
 
@@ -98,7 +99,26 @@ client.on("messageDelete", async (message) => {
     const user = message.guild?.members.cache.get("453146976008011777");
 
     const dm = await user?.createDM();
-    dm?.send(`${message.author?.username} said: ${message.content}`);
+
+    if (!(message.channel instanceof TextChannel)) return;
+
+    const embed = new Discord.MessageEmbed()
+      .setColor("BLURPLE")
+      .setTitle("Ghost Ping Detected")
+      .setDescription("this is just some placeholder text")
+      .addFields(
+        { name: "Sender:", value: `<@${message.author?.id}>` },
+        { name: "Channel Name:", value: `\`${message.channel.name}\`` },
+        { name: "Message Content:", value: message.content },
+        {
+          name: "Sent At:",
+          value: `\`${DateTime.fromMillis(message.createdTimestamp)
+            .setZone("UTC+6")
+            .toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS)}\``,
+        }
+      );
+
+    dm?.send({ embeds: [embed] });
   } else {
     return;
   }
